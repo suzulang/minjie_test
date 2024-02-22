@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bootdemo.mapper.SqlQueryMapper">
+
+    <!-- 动态执行 SQL 的示意，实际上 MyBatis 不支持这样做 -->
+    <select id="executeDynamicSql" resultType="map">
+        ${sql}
+    </select>
+
+</mapper>

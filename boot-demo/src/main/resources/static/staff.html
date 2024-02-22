@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Staff List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/staff/all',
+                type: 'GET',
+                success: function(data) {
+                    var table = '<table border="1"><tr><th>ID</th><th>Name</th><th>Dept ID</th></tr>';
+                    $.each(data, function(i, staff) {
+                        table += '<tr><td>' + staff.id + '</td><td>' + staff.name + '</td><td>' + staff.deptId + '</td></tr>';
+                    });
+                    table += '</table>';
+                    $('#staffTable').html(table);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="staffTable">Staff information will be listed here.</div>
+</body>
+</html>

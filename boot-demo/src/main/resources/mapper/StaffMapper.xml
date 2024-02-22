@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.bootdemo.mapper.StaffMapper">
+
+    <!-- 查询所有员工信息 -->
+    <select id="findAllStaff" resultType="Staff">
+        SELECT
+            s.ID AS id,
+            s.NAME AS name,
+            s.DEPT_ID as deptId,
+            d.NAME AS deptName,
+            d.PARENT_ID as parentDeptId,
+            pd.NAME AS parentDeptName
+        FROM
+            STAFF_JIANGTIANPEI s
+                INNER JOIN DEPT_JIANGTIANPEI d ON s.DEPT_ID = d.ID
+                LEFT JOIN DEPT_JIANGTIANPEI pd ON d.PARENT_ID = pd.ID
+    </select>
+
+    <!-- 分页查询员工信息 -->
+    <select id="findStaffByPage" resultType="Staff">
+        SELECT
+            ID, NAME, DEPT_ID
+        FROM
+            STAFF_JIANGTIANPEI
+                LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+</mapper>

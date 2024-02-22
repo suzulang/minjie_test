@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传并执行 SQL 文件</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault(); // 阻止默认表单提交
+                var formData = new FormData(this);
+                var fileName = $('#fileInput').val().split('\\').pop(); // 获取文件名
+
+                // 将文件名添加到表单数据中，服务器可以使用它来确定处理方法
+                formData.append('fileName', fileName);
+
+                $.ajax({
+                    url: '/upload',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        // 显示查询结果
+                        displayQueryResult(data, fileName);
+                    },
+                    error: function(xhr) {
+                        alert('错误: ' + xhr.statusText); // 中文错误提示
+                    },
+                });
+            });
+        });
+
+        function displayQueryResult(data, fileName) {
+            var resultHtml = '<table border="1"><tr>';
+            var columnMappings;
+
+            // 根据文件名确定使用哪一组列头
+            if (fileName === 'firstQuery.sql') {
+                columnMappings = {
+                    "ID": "职工编号",
+                    "NAME": "职工名称",
+                    "DEPT_ID": "所属部门编号"
+                };
+            } else if (fileName === 'secondQuery.sql') {
+                columnMappings = {
+                    "职工编号": "职工编号",
+                    "职工名称": "职工名称",
+                    "所属部门编号": "所属部门编号",
+                    "所属部门名称": "所属部门名称",
+                    "所属上级部门编号": "所属上级部门编号",
+                    "所属上级部门名称": "所属上级部门名称"
+                };
+            } else {
+                alert('未知的 SQL 文件。'); // 中文提示
+                return;
+            }
+
+            // 使用映射的列名构建表头
+            $.each(columnMappings, function(key, header) {
+                resultHtml += '<th>' + header + '</th>';
+            });
+            resultHtml += '</tr>';
+
+            // 使用映射中的键构建表格数据
+            $.each(data, function(i, row) {
+                resultHtml += '<tr>';
+                $.each(columnMappings, function(key, header) {
+                    var cellValue = (row[key] !== null && row[key] !== undefined) ? row[key] : "未填写"; // 提供默认值
+                    resultHtml += '<td>' + cellValue + '</td>';
+                });
+                resultHtml += '</tr>';
+            });
+
+            resultHtml += '</table>';
+            $('#queryResult').html(resultHtml);
+        }
+    </script>
+</head>
+<body>
+<h2>上传 SQL 文件并执行</h2>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" name="file" required>
+    <button type="submit">上传并执行</button>
+</form>
+<div id="queryResult"><strong>查询结果：</strong></div>
+</body>
+</html>
